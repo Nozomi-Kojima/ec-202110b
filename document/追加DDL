@@ -1,0 +1,6 @@
+CREATE TABLE reviews(
+	id serial NOT NULL,
+	name text,
+	review text,
+	user_id integer NOT NULL,
+	item_id integer NOT NULL);
