@@ -110,7 +110,7 @@ class ItemControllerTest {
 	
 	@Test
 	@DisplayName("人気順")
-	@DatabaseSetup("/popularSearch") // テスト実行前に初期データを投入
+	@DatabaseSetup("/pSearch") // テスト実行前に初期データを投入
 	void searchItem3() throws Exception{
 		MvcResult mvcResult = mockMvc.perform(post("/item/search")
 				.param("sortType","popular"))
@@ -162,6 +162,21 @@ class ItemControllerTest {
 	void setUpOrderItemForm() throws Exception{
 		OrderItemForm form = itemController.setUpOrderItemForm();
 		assertTrue(form instanceof OrderItemForm);
+	}
+	@Test
+	@DisplayName("アイテムデータベースが空")
+	@DatabaseSetup("/emptySearch") 
+	void searchItem6() throws Exception{
+		MvcResult mvcResult = mockMvc.perform(post("/item/search")
+				.param("sortType", "popular"))
+				.andExpect(view().name("/item/item_list_noodle"))
+				.andReturn();
+		
+		ModelAndView mav = mvcResult.getModelAndView();
+		
+		String message = (String)mav.getModel().get("message");
+		
+		assertEquals("該当の商品が見つかりません", message);
 	}
 	
 	@Test
