@@ -125,7 +125,7 @@ class ItemControllerTest {
 		Item item = itemList.get(0);
 		assertEquals("赤ラーメン", item.getName());
 		Item item2 = itemList.get(1);
-		assertEquals("追い鰹チャーシュー", item2.getName());
+		assertEquals("とんこつラーメン", item2.getName());
 	}
 	
 	@Test
