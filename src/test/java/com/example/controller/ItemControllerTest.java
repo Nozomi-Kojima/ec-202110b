@@ -52,6 +52,7 @@ class ItemControllerTest {
 	
 	
 	@Test
+	@DisplayName("アイテム一覧　初期表示")
 	void showlist() throws Exception{
 		//コントローラー呼び出し//
 		MvcResult mvcResult = mockMvc.perform(get("/item")).andExpect(view().name("/item/item_list_noodle")).andReturn();
@@ -106,6 +107,7 @@ class ItemControllerTest {
 		Item item = itemList.get(0);
 		assertEquals("旨辛味噌麺", item.getName());
 	}
+	
 	@Test
 	@DisplayName("人気順")
 	@DatabaseSetup("/popularSearch") // テスト実行前に初期データを投入
@@ -125,6 +127,7 @@ class ItemControllerTest {
 		Item item2 = itemList.get(1);
 		assertEquals("追い鰹チャーシュー", item2.getName());
 	}
+	
 	@Test
 	@DisplayName("名前検索　人気順")
 	void searchItem4() throws Exception{
@@ -162,6 +165,7 @@ class ItemControllerTest {
 	}
 	
 	@Test
+	@DisplayName("アイテム詳細へ遷移")
 	void showDetail() throws Exception{
 		MvcResult mvcResult = mockMvc.perform(post("/item/showDetail")
 				.param("id","4"))
