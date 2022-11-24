@@ -51,7 +51,7 @@ class OrderControllerTest {
 		
 		mockMvc.perform(post("/register/insert")
                 .param("name", "田中佑奈")
-                .param("email", "yamada@example.com")
+                .param("email", "tanaka@example.com")
                 .param("password", "mogumogu")
                 .param("zipcode", "111-1111")
                 .param("address", "東京都新宿区")
