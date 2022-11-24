@@ -148,7 +148,7 @@ class ItemControllerTest {
 	@DisplayName("名前検索　該当なし")
 	void searchItem5() throws Exception{
 		MvcResult mvcResult = mockMvc.perform(post("/item/search")
-				.param("name","v").param("sortType", "popular"))
+				.param("name","v").param("sortType", "aaa"))
 				.andExpect(view().name("/item/item_list_noodle"))
 				.andReturn();
 		
