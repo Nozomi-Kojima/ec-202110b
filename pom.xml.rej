@@ -7,6 +7,12 @@ diff a/pom.xml b/pom.xml	(rejected hunks)
 -	  		<groupId>org.springframework.boot</groupId>
 -	 		 <artifactId>spring-boot-starter-security</artifactId>
 -		</dependency>
+         <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.7.2</version>
+            <scope>test</scope>
+        </dependency>
 +		
  	</dependencies>
  
