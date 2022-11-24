@@ -4,9 +4,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/ec-202110b-test
     username: postgres
     password: postgres
-#  sql:
-#    init:
-#      mode: always
+  sql:
+     init:
+       mode: always
   mail:
     host: localhost
     port: 1025
