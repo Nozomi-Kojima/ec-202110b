@@ -17,6 +17,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.example.util.CsvDataSetLoader;
@@ -32,7 +33,10 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
       DependencyInjectionTestExecutionListener.class, // このテストクラスでDIを使えるように指定
       TransactionDbUnitTestExecutionListener.class // @DatabaseSetupや@ExpectedDatabaseなどを使えるように指定
 })
+@Transactional
 class UserControllerTest {
+	
+	
 	@Autowired
     private WebApplicationContext wac;
     private MockMvc mockMvc;

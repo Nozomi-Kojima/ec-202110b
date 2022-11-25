@@ -23,8 +23,8 @@ public class SessionUtil {
 		user.setName("テストユーザ");
 		user.setEmail("ramen.test@gmail.com");
 		user.setAddress("テスト住所");
-		user.setZipcode("1111111");
-		user.setTelephone("テスト電話番号");
+		user.setZipcode("111-1111");
+		user.setTelephone("080-0000-0000");
 		userList.add(user);
 		sessionMap.put("userId", user.getId());
 		sessionMap.put("user", userList);
