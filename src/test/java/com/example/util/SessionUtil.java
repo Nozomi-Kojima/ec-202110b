@@ -21,8 +21,8 @@ public class SessionUtil {
 		user.setZipcode("000-0000");
 		user.setAddress("テスト住所");
 		user.setTelephone("000-1111-2222");
-		user.setPassword("morimori");
-		user.setPasswordConfirm("morimori");
+		user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
+		user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
 		userList.add(user); 
 		sessionMap.put("userId", user.getId());
 		sessionMap.put("user",userList);

@@ -160,15 +160,14 @@ class MypageControllerTest {
 		MvcResult mvcResult = mockMvc.perform(post("/mypage/updateUser")
 				.param("password", "morimori")
 				.session(userSession))
-				.andExpect(view().name("/mypage/toUpdateUserFinished")).andReturn();
+				.andExpect(view().name("redirect:/mypage/toUpdateUserFinished")).andReturn();
 	}
 	@Test
 	@DisplayName("消去しますか？yesの場合")
-	@DatabaseSetup("/myPage/toMypage_01")
 	void deleteUserConfirmTest1() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
-				.param("confilm", "yes")
+		MvcResult mvcResult2 = mockMvc.perform(post("/mypage/deleteUserConfirm")
+				.param("confirm", "yes")
 				.session(userSession))
 				.andExpect(view().name("mypage/deleteUser")).andReturn();
 	}
@@ -182,27 +181,25 @@ class MypageControllerTest {
 				.session(userSession))
 				.andExpect(view().name("mypage/notDeleteUser")).andReturn();
 	}
+	
 	@Test
-	@DisplayName("ユーザー消去でパスワードが合っていた場合")
-	@DatabaseSetup("/myPage/toMypage_01")
+	@DisplayName("ユーザー消去する時、パスワードが違うとエラーが出る")
 	void deleteUserTest1() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
-				.param("confilm", "yes")
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUser")
+				.param("inputPassword", "morimoriadaaoi")
 				.session(userSession))
-				.andExpect(view().name("mypage/deleteUser")).andReturn();
+				.andExpect(view().name("/mypage/deleteUserConfirm")).andReturn();
 	}
-	
 	@Test
-	@DisplayName("ユーザー消去でパスワードが間違っていた場合")
-	@DatabaseSetup("/myPage/toMypage_01")
+	@DisplayName("ユーザー消去する時、パスワードがあってれば更新完了画面が出る")
 	void deleteUserTest2() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
-				.param("confilm", "yes")
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUser")
+				.param("inputPassword", "morimori")
 				.session(userSession))
-				.andExpect(view().name("mypage/deleteUser")).andReturn();
+				.andExpect(view().name("/mypage/deleteUserFinished")).andReturn();
 	}
-	
+
 	
 }
