@@ -20,6 +20,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,6 +29,7 @@ import com.example.form.ItemForm;
 import com.example.form.OrderItemForm;
 import com.example.form.ReviewForm;
 import com.example.util.CsvDataSetLoader;
+import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
@@ -35,8 +37,10 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 @DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
 @TestExecutionListeners({
 		DependencyInjectionTestExecutionListener.class,
-		TransactionalTestExecutionListener.class
+		TransactionDbUnitTestExecutionListener.class,
+//		TransactionalTestExecutionListener.class
 })
+@Transactional
 class ItemControllerTest {
 	@Autowired
 	private WebApplicationContext wac;

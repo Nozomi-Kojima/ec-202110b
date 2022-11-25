@@ -17,12 +17,12 @@ public class SessionUtil {
 		List<User> userList = new ArrayList<>();
 		user.setId(1);
 		user.setName("テストユーザ");
-		user.setEmail("@gmail.com");
-		user.setPassword("Abcd1234");
-		user.setZipcode("1111111");
+		user.setEmail("test@test.co.jp");
+		user.setPassword("morimori");
+		user.setZipcode("111-1111");
 		user.setAddress("テスト住所");
-		user.setTelephone("テスト電話番号");
-		user.setPasswordConfirm("Abcd1234");
+		user.setTelephone("000-0000-0000");
+		user.setPasswordConfirm("morimori");
 		sessionMap.put("userId", user.getId());
 		sessionMap.put("user", userList);
 		return createMockHttpSession(sessionMap);
