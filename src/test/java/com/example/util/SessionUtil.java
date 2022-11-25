@@ -18,9 +18,11 @@ public class SessionUtil {
 		user.setId(1);
 		user.setName("テスト");
 		user.setEmail("test@test.co.jp");
-		user.setZipcode("1112222");
+		user.setZipcode("000-0000");
 		user.setAddress("テスト住所");
-		user.setTelephone("テスト電話番号");
+		user.setTelephone("000-1111-2222");
+		user.setPassword("morimori");
+		user.setPasswordConfirm("morimori");
 		userList.add(user); 
 		sessionMap.put("userId", user.getId());
 		sessionMap.put("user",userList);

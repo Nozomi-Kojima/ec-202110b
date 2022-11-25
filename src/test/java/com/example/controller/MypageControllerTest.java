@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import javax.validation.constraints.Email;
@@ -23,7 +24,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.example.util.CsvDataSetLoader;
 import com.example.util.SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 
 @SpringBootTest
@@ -32,7 +36,6 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
       DependencyInjectionTestExecutionListener.class,
       TransactionDbUnitTestExecutionListener.class 
 })
-
 class MypageControllerTest {
     @Autowired
     private WebApplicationContext wac;
@@ -104,17 +107,102 @@ class MypageControllerTest {
 	@DisplayName("もしユーザー更新結果がエラーだったら")
 	void updateUserConfirmTest() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();		
-		userSession.setNew(false);
-		MvcResult mvcResultError = mockMvc.perform(get("/mypage/updateUserConfirm").session(userSession))
-				.andExpect(view().name("/mypage/updateUser")).andReturn();
-	}
-	@Test
-	@DisplayName("もしメールアドレスが重複していたら")
-	void updateUserConfirmTest2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-		MvcResult mvcResultDuplication = mockMvc.perform(get("/mypage/updateUserConfirm").session(userSession))
+		
+		MvcResult mvcResultError = mockMvc.perform(post("/mypage/updateUserConfirm")
+				.param("name", "小島")
+				.param("email","kojima@test.com")
+				.param("zipcode", "22222")
+				.param("address", "東京都")
+				.param("telephone", "電話番号")
+				.session(userSession))
 				.andExpect(view().name("/mypage/updateUser")).andReturn();
 	}
 	
-
+	@Test
+	@DisplayName("メールアドレスを変更する時、変更メールアドレスが既に登録されていればエラーが出るか")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void updateUserConfirmTest2() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResultDuplication = mockMvc.perform(post("/mypage/updateUserConfirm")
+				.param("email","nobuhiko.tobita@gmail.com")
+				.session(userSession))
+				.andExpect(view().name("/mypage/updateUser")).andReturn();
+	}
+	
+	@Test
+	@DisplayName("メールアドレスを変更する時、無事に変更できた時")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void updateUserConfirmTest3() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResultSuccess = mockMvc.perform(post("/mypage/updateUserConfirm")
+				.param("name", "小島")
+				.param("email","kojima@test.com")
+				.param("zipcode", "222-2222")
+				.param("address", "東京都")
+				.param("telephone", "030-2459-3249")
+				.session(userSession))
+				.andExpect(view().name("/mypage/updateUserConfirm")).andReturn();
+	}
+	@Test
+	@DisplayName("ユーザー情報更新時、パスワードが違うとエラーが出る")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void updateUserConfirmTest4() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/updateUser")
+				.param("password", "morimoriadaaoi")
+				.session(userSession))
+				.andExpect(view().name("/mypage/updateUserConfirm")).andReturn();
+	}
+	@Test
+	@DisplayName("ユーザー情報更新時、パスワードがあってれば更新完了画面が出る")
+	void updateUserConfirmTest5() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/updateUser")
+				.param("password", "morimori")
+				.session(userSession))
+				.andExpect(view().name("/mypage/toUpdateUserFinished")).andReturn();
+	}
+	@Test
+	@DisplayName("消去しますか？yesの場合")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void deleteUserConfirmTest1() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
+				.param("confilm", "yes")
+				.session(userSession))
+				.andExpect(view().name("mypage/deleteUser")).andReturn();
+	}
+	@Test
+	@DisplayName("消去しますか？noの場合")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void deleteUserConfirmTest2() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
+				.param("confilm", "no")
+				.session(userSession))
+				.andExpect(view().name("mypage/notDeleteUser")).andReturn();
+	}
+	@Test
+	@DisplayName("ユーザー消去でパスワードが合っていた場合")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void deleteUserTest1() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
+				.param("confilm", "yes")
+				.session(userSession))
+				.andExpect(view().name("mypage/deleteUser")).andReturn();
+	}
+	
+	@Test
+	@DisplayName("ユーザー消去でパスワードが間違っていた場合")
+	@DatabaseSetup("/myPage/toMypage_01")
+	void deleteUserTest2() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
+				.param("confilm", "yes")
+				.session(userSession))
+				.andExpect(view().name("mypage/deleteUser")).andReturn();
+	}
+	
+	
 }
