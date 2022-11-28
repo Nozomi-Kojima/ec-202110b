@@ -1,10 +1,12 @@
 package com.example.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import javax.validation.constraints.Email;
+import javax.validation.constraints.AssertTrue;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,14 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.example.util.CsvDataSetLoader;
 import com.example.util.SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
-import com.github.springtestdbunit.annotation.ExpectedDatabase;
-import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 
 @SpringBootTest
@@ -60,7 +61,9 @@ class MypageControllerTest {
 	void toMypageTest() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toMypage").session(userSession))
-				.andExpect(view().name("/mypage/mypage")).andReturn();
+				.andExpect(view().name("/mypage/mypage")).andReturn();		
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("/mypage/mypage", mav.getViewName());
 	}
 	@Test
 	@DisplayName("ログインできなかったらログイン画面へ遷移")
@@ -69,6 +72,8 @@ class MypageControllerTest {
 		userSession.clearAttributes();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toMypage").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("forward:/user/toLogin", mav.getViewName());
 	}
 	@Test
 	@DisplayName("ユーザー更新画面へ遷移")
@@ -76,9 +81,13 @@ class MypageControllerTest {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toUpdateUser").session(userSession))
 				.andExpect(view().name("/mypage/updateUser")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("/mypage/updateUser", mav.getViewName());
 		userSession.clearAttributes();
 		MvcResult mvcResultfailure = mockMvc.perform(get("/mypage/toUpdateUser").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
+	    ModelAndView mav1 = mvcResultfailure.getModelAndView();
+        assertEquals("forward:/user/toLogin", mav1.getViewName());
 		
 	}
 	@Test
@@ -87,9 +96,13 @@ class MypageControllerTest {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toUpdateUserFinished").session(userSession))
 				.andExpect(view().name("/mypage/updateUserFinished")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("/mypage/updateUserFinished", mav.getViewName());
 		userSession.clearAttributes();
 		MvcResult mvcResultfailure = mockMvc.perform(get("/mypage/toUpdateUserFinished").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
+		   ModelAndView mav1 = mvcResultfailure.getModelAndView();
+	        assertEquals("forward:/user/toLogin", mav1.getViewName());
 		
 	}
 	@Test
@@ -98,9 +111,13 @@ class MypageControllerTest {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toDeleteUserConfirm").session(userSession))
 				.andExpect(view().name("/mypage/deleteUserConfirm")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("/mypage/deleteUserConfirm", mav.getViewName());
 		userSession.clearAttributes();
 		MvcResult mvcResultfailure = mockMvc.perform(get("/mypage/toDeleteUserConfirm").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
+		   ModelAndView mav1 = mvcResultfailure.getModelAndView();
+	        assertEquals("forward:/user/toLogin", mav1.getViewName());
 		
 	}
 	@Test
@@ -116,6 +133,8 @@ class MypageControllerTest {
 				.param("telephone", "電話番号")
 				.session(userSession))
 				.andExpect(view().name("/mypage/updateUser")).andReturn();
+	    ModelAndView mav = mvcResultError.getModelAndView();
+        assertEquals("/mypage/updateUser", mav.getViewName());
 	}
 	
 	@Test
@@ -127,6 +146,8 @@ class MypageControllerTest {
 				.param("email","nobuhiko.tobita@gmail.com")
 				.session(userSession))
 				.andExpect(view().name("/mypage/updateUser")).andReturn();
+	    ModelAndView mav = mvcResultDuplication.getModelAndView();
+        assertEquals("/mypage/updateUser", mav.getViewName());
 	}
 	
 	@Test
@@ -142,6 +163,8 @@ class MypageControllerTest {
 				.param("telephone", "030-2459-3249")
 				.session(userSession))
 				.andExpect(view().name("/mypage/updateUserConfirm")).andReturn();
+	    ModelAndView mav = mvcResultSuccess.getModelAndView();
+        assertEquals("/mypage/updateUserConfirm", mav.getViewName());
 	}
 	@Test
 	@DisplayName("ユーザー情報更新時、パスワードが違うとエラーが出る")
@@ -152,6 +175,8 @@ class MypageControllerTest {
 				.param("password", "morimoriadaaoi")
 				.session(userSession))
 				.andExpect(view().name("/mypage/updateUserConfirm")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("/mypage/updateUserConfirm", mav.getViewName());
 	}
 	@Test
 	@DisplayName("ユーザー情報更新時、パスワードがあってれば更新完了画面が出る")
@@ -161,6 +186,8 @@ class MypageControllerTest {
 				.param("password", "morimori")
 				.session(userSession))
 				.andExpect(view().name("redirect:/mypage/toUpdateUserFinished")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("redirect:/mypage/toUpdateUserFinished", mav.getViewName());
 	}
 	@Test
 	@DisplayName("消去しますか？yesの場合")
@@ -170,6 +197,8 @@ class MypageControllerTest {
 				.param("confirm", "yes")
 				.session(userSession))
 				.andExpect(view().name("mypage/deleteUser")).andReturn();
+	    ModelAndView mav = mvcResult2.getModelAndView();
+        assertEquals("mypage/deleteUser", mav.getViewName());
 	}
 	@Test
 	@DisplayName("消去しますか？noの場合")
@@ -180,6 +209,8 @@ class MypageControllerTest {
 				.param("confilm", "no")
 				.session(userSession))
 				.andExpect(view().name("mypage/notDeleteUser")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("mypage/notDeleteUser", mav.getViewName());
 	}
 	
 	@Test
@@ -190,6 +221,8 @@ class MypageControllerTest {
 				.param("inputPassword", "morimoriadaaoi")
 				.session(userSession))
 				.andExpect(view().name("/mypage/deleteUserConfirm")).andReturn();
+	    ModelAndView mav = mvcResult.getModelAndView();
+        assertEquals("/mypage/deleteUserConfirm", mav.getViewName());
 	}
 	@Test
 	@DisplayName("ユーザー消去する時、パスワードがあってれば更新完了画面が出る")
@@ -199,6 +232,8 @@ class MypageControllerTest {
 				.param("inputPassword", "morimori")
 				.session(userSession))
 				.andExpect(view().name("/mypage/deleteUserFinished")).andReturn();
+		   ModelAndView mav = mvcResult.getModelAndView();
+	        assertEquals("/mypage/deleteUserFinished", mav.getViewName());
 	}
 
 	

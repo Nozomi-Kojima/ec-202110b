@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.example.util.CsvDataSetLoader;
 import com.example.util.SessionUtil;
@@ -62,6 +64,8 @@ class OrderHistoryControllerTest {
 		userSession.clearAttributes();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
+		 ModelAndView mav = mvcResult.getModelAndView();
+	        assertEquals("forward:/user/toLogin", mav.getViewName());
 	}
 	
 	@Test
@@ -70,6 +74,8 @@ class OrderHistoryControllerTest {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("orderHistory/order_no_history")).andReturn();
+		 ModelAndView mav = mvcResult.getModelAndView();
+	        assertEquals("orderHistory/order_no_history", mav.getViewName());
 	}
 	@Test
 	@DisplayName("注文がある場合")
@@ -79,5 +85,14 @@ class OrderHistoryControllerTest {
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("orderHistory/order_history")).andReturn();
 	}
+	@Test
+	@DisplayName("注文履歴詳細")
+	@DatabaseSetup("/order")
+	void showDetailTest() throws Exception {
+		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(get("/orderHistory/showDetail").session(userSession))
+				.andExpect(view().name("orderHistory/order_history_detail")).andReturn();
+	}
+	
 
 }
