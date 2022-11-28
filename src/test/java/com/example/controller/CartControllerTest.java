@@ -2,6 +2,7 @@ package com.example.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -29,6 +30,8 @@ import com.example.util.CsvDataSetLoader;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 @SpringBootTest
 @DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
@@ -49,8 +52,6 @@ class CartControllerTest {
 	
 	@Autowired
 	private WebApplicationContext wac;
-//	@Autowired
-//	private CartController cart;
 	
 	private MockMvc mockMvc;
 	
@@ -58,19 +59,10 @@ class CartControllerTest {
 	void setup() throws Exception {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 	}
-	
-	
-	/*
-	 * @BeforeEach void each()throws Exception { MvcResult mvcResult1 =
-	 * mockMvc.perform(post("/item/item_list_noodle").param("id", "1"))
-	 * .andExpect(view().name("/item/item_detail")).andReturn(); }
-	 */
 
 	@Test
 	@DisplayName("カート追加　未ログイン")
 	void insertToCart() throws Exception{
-//		List<Integer> topping = new ArrayList<>(List.of(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0));
-		
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
 				.param("itemId", "1").param("size","M").param("quantity", "1")
 				.param("orderToppingList", "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"))
@@ -86,7 +78,18 @@ class CartControllerTest {
 		OrderItem item = new OrderItem(null, 1, null, 1, 'M', i, null);
 		List<OrderItem> result = new LinkedList<>(List.of(item));
 		
-		assertEquals(result.get(0).getItem().getName(), orderItemList.get(0).getItem().getName());
+		assertEquals(result.toString(), orderItemList.toString());
+	}
+	@Test
+	@DisplayName("カート追加　ログイン")
+	@ExpectedDatabase(value = "/userInsertToCart", assertionMode = DatabaseAssertionMode.NON_STRICT)
+	void insertToCart2() throws Exception{
+		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
+				.session(userSession)
+				.param("itemId", "1").param("size","M").param("quantity", "1")
+				.param("orderToppingList", "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"))
+				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
 	}
 	
 	@Test
@@ -95,33 +98,75 @@ class CartControllerTest {
 		 MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
 		 MvcResult mvcResult = mockMvc.perform(post("/cart/delete")
                  .session(cartSession)
-                 .param("index", "0"))
-				 .andExpect(view().name("/cart/showCart"))
+                 .param("index", "0").param("orderItemId",""))
+				 .andExpect(view().name("forward:/cart/showCart"))
 				 .andReturn();
 		 MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession(); 
-		 assertNull(mockSession);
+		 assertNull(mockSession.getAttribute("orderItemList"));
 	}
 	
 	@Test
-	@DisplayName("カートを見る")
+	@DisplayName("カートを見る　未ログイン　カート追加なし")
 	@DatabaseSetup("/popularSearch")
-	void showCart() throws Exception{
-		
+	void showCart1() throws Exception{
+		 MvcResult mvcResult = mockMvc.perform(post("/cart/showCart"))
+				 .andExpect(view().name("/cart/cart_list_noItem"))
+				 .andReturn();
+		 
+		 assertTrue("/cart/cart_list_noItem" == mvcResult.getModelAndView().getViewName());
+	}
+	@Test
+	@DisplayName("カートを見る　未ログイン　カート追加あり")
+	@DatabaseSetup("/popularSearch")
+	void showCart2() throws Exception{
+		MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
+		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
+				.session(cartSession))
+				.andExpect(view().name("/cart/cart_list"))
+				.andReturn();
+		MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession();
+		assertEquals(70, mockSession.getAttribute("tax"));
+		assertEquals(770, mockSession.getAttribute("totalPrice"));
+	}
+	@Test
+	@DisplayName("カートを見る　ログイン　カート追加なし")
+	@DatabaseSetup("/popularSearch")
+	void showCart3() throws Exception{
+		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
+				.session(userSession))
+				.andExpect(view().name("/cart/cart_list_noItem"))
+				.andReturn();
+		assertTrue("/cart/cart_list_noItem" == mvcResult.getModelAndView().getViewName());
+	}
+	@Test
+	@DisplayName("カートを見る　ログイン　カート追加あり")
+	@DatabaseSetup("/popularSearch")
+	void showCart4() throws Exception{
+		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
+		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
+				.session(userSession).session(cartSession))
+				.andExpect(view().name("/cart/cart_list"))
+				.andReturn();
+		MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession();
+		assertEquals(70, mockSession.getAttribute("tax"));
+		assertEquals(770, mockSession.getAttribute("totalPrice"));
 	}
 	
 	@Test
 	@DisplayName("カートを統合")
+	@DatabaseSetup("/userInsertToCart")
 	void combineCart() throws Exception{
-		 MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
-		 MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		 MockHttpSession session = com.example.util.SessionUtil.createUserCartSession();
 		 MvcResult mvcResult = mockMvc.perform(post("/cart/combineCart")
-                 .session(cartSession).session(userSession))
-				 .andExpect(view().name("/order/order_confirm"))
+                 .session(session))
+				 .andExpect(view().name("order/order_confirm"))
 				 .andReturn();
 		
 		 MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession(); 
-		 
-		 assertEquals(770, mockSession.getAttribute("totalPrice"));
+		 assertEquals(140, mockSession.getAttribute("tax"));
+		 assertEquals(1540, mockSession.getAttribute("totalPrice"));
 	}
 
 }
