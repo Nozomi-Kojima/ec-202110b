@@ -19,9 +19,11 @@ public class SessionUtil {
 		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
 		User user = new User();
 		List<User> userList = new ArrayList<>();
-		user.setId(1);
+		user.setId(10);
 		user.setName("テストユーザ");
-		user.setEmail("ramen.test@gmail.com");
+		user.setEmail("nobuhiko.tobita@gmail.com");
+		user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
+		user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
 		user.setAddress("テスト住所");
 		user.setZipcode("111-1111");
 		user.setTelephone("080-0000-0000");

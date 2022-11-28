@@ -66,6 +66,8 @@ create table order_items (
 ) ;
 
 -- 注文トッピング
+drop table if exists order_toppings cascade;
+
 create table order_toppings (
   id serial primary key
   , topping_id integer not null
@@ -132,6 +134,10 @@ insert into toppings values(15, 'ザーサイ', 200, 300);
 insert into toppings values(16, '大トロチャーシュー', 200, 300);
 insert into toppings values(17, '太麺に変更', 200, 300);
 insert into toppings values(18, '追い飯', 200, 300);
+
+
+
+drop table if exists reviews cascade;
 
 CREATE TABLE reviews(
 	id serial NOT NULL,
