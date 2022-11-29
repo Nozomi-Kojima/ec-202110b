@@ -33,7 +33,6 @@ public class SessionUtil {
 		return createMockHttpSession(sessionMap);
 	}
 	
-	
 
 	private static MockHttpSession createMockHttpSession(Map<String, Object> sessions) {
 		MockHttpSession mockHttpSession = new MockHttpSession();

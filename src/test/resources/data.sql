@@ -1,4 +1,4 @@
---ユーザー
+-- ユーザー
 drop table if exists users cascade;
 
 create table users (
@@ -10,7 +10,6 @@ create table users (
  , address varchar(200) not null
  , telephone varchar(15) not null
 ) ;
-
 
 -- 商品
 drop table if exists items cascade;
@@ -83,8 +82,6 @@ user_email varchar(100) NOT NULL,
 unique_url varchar(128) NOT NULL UNIQUE
 );
 
---ユーザー登録(pass:morimori)
-insert into users(name, email, password, zipcode, address, telephone) values('テストユーザ', 'ramen.test@gmail.com', '$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq','1111111', 'テスト住所', 'テスト電話番号');
 
 --商品
 insert into items values(1, 'とんこつラーメン', '創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。', 700, 800, '1.jpg');
@@ -137,8 +134,46 @@ insert into toppings values(18, '追い飯', 200, 300);
 
 
 
-drop table if exists reviews cascade;
+-- 注文
+drop table if exists orders cascade;
 
+create table orders (
+  id serial primary key
+  , user_id integer not null
+  , status integer not null
+  , total_price integer not null
+  , order_date date
+  , destination_name varchar(100)
+  , destination_email varchar(100)
+  , destination_zipcode varchar(8)
+  , destination_address varchar(200)
+  , destination_tel varchar(15)
+  , delivery_time timestamp
+  , payment_method integer
+  ) ;
+
+-- 注文商品
+drop table if exists order_items cascade;
+
+create table order_items (
+  id serial primary key
+  , item_id integer not null
+  , order_id integer not null
+  , quantity integer not null
+  , size varchar(1)
+) ;
+
+-- 注文トッピング
+drop table if exists order_toppings cascade;
+
+create table order_toppings (
+  id serial primary key
+  , topping_id integer not null
+  , order_item_id integer not null
+) ;
+
+
+drop table if exists reviews cascade;
 CREATE TABLE reviews(
 	id serial NOT NULL,
 	name text,
@@ -147,3 +182,5 @@ CREATE TABLE reviews(
 	item_id integer NOT NULL);
 
 
+--ユーザー登録(pass:morimori)
+insert into users(name, email, password, zipcode, address, telephone) values('テストユーザ', 'ramen.test@gmail.com', '$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq','1111111', 'テスト住所', 'テスト電話番号');

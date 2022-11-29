@@ -10,9 +10,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -136,7 +133,7 @@ public class OrderController {
 		order.setDestinationAddress(form.getAddress());
 		order.setDestinationTel(form.getDestinationTel());
 		order.setPaymentMethod(Integer.parseInt(form.getPaymentMethod()));
-		
+	
 		order.setTotalPrice((Integer)session.getAttribute("totalPrice"));
 
 		//orderドメインに注文時刻をセットする
@@ -218,7 +215,7 @@ public class OrderController {
 		return "redirect:/order/toOrderFinished";
 	}
 	
-	/**注文完了画面に遷移するメソッド
+	/**注文完了画面へ遷移する
 	 * @return　注文完了画面
 	 */
 	@RequestMapping("/toOrderFinished")
