@@ -11,10 +11,6 @@ create table users (
  , telephone varchar(15) not null
 ) ;
 
-
---ユーザー登録(pass:morimori)
-insert into users(name, email, password, zipcode, address, telephone) values('テストユーザ', 'test@test.co.jp', '$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq','1111111', 'テスト住所', 'テスト電話番号');
-
 -- 商品
 drop table if exists items cascade;
 
@@ -28,6 +24,66 @@ create table items (
   , deleted boolean default false not null
 ) ;
 
+-- トッピング
+drop table if exists toppings cascade;
+
+create table toppings (
+  id integer primary key
+  , name text not null
+  , price_m integer not null
+  , price_l integer not null
+) ;
+
+
+-- 注文
+drop table if exists orders cascade;
+
+create table orders (
+  id serial primary key
+  , user_id integer not null
+  , status integer not null
+  , total_price integer not null
+  , order_date date
+  , destination_name varchar(100)
+  , destination_email varchar(100)
+  , destination_zipcode varchar(8)
+  , destination_address varchar(200)
+  , destination_tel varchar(15)
+  , delivery_time timestamp
+  , payment_method integer
+  ) ;
+
+-- 注文商品
+drop table if exists order_items cascade;
+
+create table order_items (
+  id serial primary key
+  , item_id integer not null
+  , order_id integer not null
+  , quantity integer not null
+  , size varchar(1)
+) ;
+
+-- 注文トッピング
+drop table if exists order_toppings cascade;
+
+create table order_toppings (
+  id serial primary key
+  , topping_id integer not null
+  , order_item_id integer not null
+) ;
+
+--パスワードリセットテーブル
+drop table if exists password_resets cascade;
+
+CREATE TABLE password_resets(
+id serial primary key,
+user_email varchar(100) NOT NULL,
+unique_url varchar(128) NOT NULL UNIQUE
+);
+
+
+--商品
 insert into items values(1, 'とんこつラーメン', '創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。', 700, 800, '1.jpg');
 insert into items values(2, '赤ラーメン', '自家製の香味油と辛みそを加えることで、一杯のラーメンの中でいくつもの味の奥行きと調和を楽しめます。白丸が正統派のとんこつラーメンならば、赤丸新味は豚骨ラーメンの可能性を広げた“革新派”。 コクと深みを追求した、自信作です。', 750, 850, '2.jpg');
 insert into items values(3, 'からか麺', '博多絹ごしとんこつをベースに、豆板醤や甜麺醤などを独自に配合した肉味噌を大胆にトッピング。山椒などのスパイスを効かせた自家製ラー油が全体をピリリとまとめあげ、中太のストレート麺がうま味と辛味を余すところなくすくいあげます。1989年に大名本店で登場以来、進化を続ける根強い人気の一杯です。', 800, 900, '3.jpg');
@@ -75,6 +131,7 @@ insert into toppings values(15, 'ザーサイ', 200, 300);
 insert into toppings values(16, '大トロチャーシュー', 200, 300);
 insert into toppings values(17, '太麺に変更', 200, 300);
 insert into toppings values(18, '追い飯', 200, 300);
+
 
 
 -- 注文
@@ -125,3 +182,5 @@ CREATE TABLE reviews(
 	item_id integer NOT NULL);
 
 
+--ユーザー登録(pass:morimori)
+insert into users(name, email, password, zipcode, address, telephone) values('テストユーザ', 'ramen.test@gmail.com', '$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq','1111111', 'テスト住所', 'テスト電話番号');
