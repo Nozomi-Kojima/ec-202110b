@@ -33,7 +33,6 @@ import com.example.service.OrderService;
  *
  */
 @Controller
-@SpringBootApplication
 @RequestMapping("/order")
 public class OrderController {
 	@ModelAttribute
