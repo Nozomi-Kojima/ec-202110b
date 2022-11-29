@@ -1,2 +1,0 @@
-name, email, password, zipcode, address, telephone
-テストユーザ, test@test.co.jp, $2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq,111-1111, テスト住所, 000-0000-0000

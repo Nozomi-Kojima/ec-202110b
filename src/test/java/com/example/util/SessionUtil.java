@@ -107,6 +107,38 @@ public class SessionUtil {
 		sessionMap.put("orderItemList", orderItemList);
 		return createMockHttpSession(sessionMap);
 	}
+	
+	public static MockHttpSession createCombineSession() {
+		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
+		List<OrderItem> orderItemList = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
+		List<OrderTopping> orderTopping = new ArrayList<>();
+		
+			Item item = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。", 700, 800, "1.jpg",false, null);
+		OrderItem orderitem = new OrderItem();
+			orderitem.setId(2);
+			orderitem.setItem(item);
+			orderitem.setItemId(1);
+			orderitem.setOrderId(2);
+			orderitem.setOrderToppingList(orderTopping);
+			orderitem.setQuantity(1);
+			orderitem.setSize('M');
+			orderItemList.add(orderitem);
+		User user = new User();
+			user.setId(1);
+			user.setName("テストユーザ");
+			user.setEmail("test@test.co.jp");
+			user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
+			user.setZipcode("111-1111");
+			user.setAddress("テスト住所");
+			user.setTelephone("000-0000-0000");
+			user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
+			userList.add(user);
+		sessionMap.put("orderitemId", orderitem.getId());
+		sessionMap.put("user", userList);
+		sessionMap.put("orderItemList", orderItemList);
+		return createMockHttpSession(sessionMap);
+	}
 
 	private static MockHttpSession createMockHttpSession(Map<String, Object> sessions) {
 		MockHttpSession mockHttpSession = new MockHttpSession();

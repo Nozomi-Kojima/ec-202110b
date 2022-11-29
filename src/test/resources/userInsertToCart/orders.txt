@@ -1,2 +1,0 @@
-id,user_id,status,total_price,order_date,destination_name,destination_email,destination_zipcode,destination_address,destination_tel,delivery_time,payment_method
-1,1,1,770,2022-12-31,テスト太郎,ono@sample.com,222-2222,東京都中野区,070-0000-0000,2023-1-1 12:00:00:00,1

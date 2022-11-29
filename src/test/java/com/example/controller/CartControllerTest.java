@@ -40,6 +40,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 	TransactionDbUnitTestExecutionListener.class
 })
 @Transactional
+
 /*
  * コントローラー実行後のセッション情報の取り出しは以下でいけそうです
  * （あくまでサンプルです。（ログイン成功後、セッションに「userId」という名前でidを保存できているかをテストする場合））
@@ -117,7 +118,7 @@ class CartControllerTest {
 	}
 	@Test
 	@DisplayName("カートを見る　未ログイン　カート追加あり")
-	@DatabaseSetup("/popularSearch")
+	@DatabaseSetup("/loginInsertCart")
 	void showCart2() throws Exception{
 		MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
@@ -130,23 +131,21 @@ class CartControllerTest {
 	}
 	@Test
 	@DisplayName("カートを見る　ログイン　カート追加なし")
-	@DatabaseSetup("/popularSearch")
+//	@DatabaseSetup("/popularSearch")
 	void showCart3() throws Exception{
 		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
 				.session(userSession))
 				.andExpect(view().name("/cart/cart_list_noItem"))
 				.andReturn();
-		assertTrue("/cart/cart_list_noItem" == mvcResult.getModelAndView().getViewName());
 	}
 	@Test
 	@DisplayName("カートを見る　ログイン　カート追加あり")
-	@DatabaseSetup("/popularSearch")
+	@DatabaseSetup("/loginInsertCart")
 	void showCart4() throws Exception{
-		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
-		MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
+		MockHttpSession session = com.example.util.SessionUtil.createUserCartSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
-				.session(userSession).session(cartSession))
+				.session(session))
 				.andExpect(view().name("/cart/cart_list"))
 				.andReturn();
 		MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession();
@@ -156,14 +155,14 @@ class CartControllerTest {
 	
 	@Test
 	@DisplayName("カートを統合")
-	@DatabaseSetup("/userInsertToCart")
+	@DatabaseSetup("/loginInsertCart")
 	void combineCart() throws Exception{
-		 MockHttpSession session = com.example.util.SessionUtil.createUserCartSession();
+		 MockHttpSession session = com.example.util.SessionUtil.createCombineSession();
 		 MvcResult mvcResult = mockMvc.perform(post("/cart/combineCart")
                  .session(session))
 				 .andExpect(view().name("order/order_confirm"))
 				 .andReturn();
-		
+		 
 		 MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession(); 
 		 assertEquals(140, mockSession.getAttribute("tax"));
 		 assertEquals(1540, mockSession.getAttribute("totalPrice"));

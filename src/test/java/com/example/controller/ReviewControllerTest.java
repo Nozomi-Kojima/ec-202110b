@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.util.CsvDataSetLoader;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
@@ -45,22 +46,38 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	@DisplayName("入力値エラーチェック")
+	void insert0() throws Exception {
+		String itemId = "1";
+		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		MvcResult mvcResult = mockMvc.perform(post("/review/insert")
+				 .session(userSession)
+				 .param("name", "").param("review", "テスト").param("itemId", itemId))
+				 .andExpect(redirectedUrl("forward:/item/showDetail?id=1"))
+				 .andExpect(flash().attribute("message", "名前を入力してください"))
+				 .andReturn();
+	}
+	
+	@Test
 	@DisplayName("未ログイン")
-	void insert() throws Exception {
+	void insert1() throws Exception {
 		String itemId = "1";
 		MvcResult mvcResult = mockMvc.perform(post("/review/insert")
-				 .param("name", "テス子").param("review", "テストテストテスト").param("itemId", itemId))
-				 .andExpect(redirectedUrl("/item/showDetail?id=" + itemId))
+				 .param("name", "テストユーザ").param("review", "テスト").param("itemId", itemId))
+				 .andExpect(redirectedUrl("/item/showDetail?id=1&message=%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F"))
 				 .andExpect(flash().attribute("message", "レビューの投稿はログインしていないと出来ません"))
 				 .andReturn();
 	}
+	
 	@Test
 	@DisplayName("ログイン")
+	@DatabaseSetup("/user")
 	@ExpectedDatabase(value = "/review", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void insert2() throws Exception {
 		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
 		String itemId = "1";
 		MvcResult mvcResult = mockMvc.perform(post("/review/insert")
+				.session(userSession)
 				.param("name", "テストユーザ").param("review", "テスト").param("itemId", itemId))
 				.andExpect(view().name("redirect:/item/showDetail?id=" + itemId))
 				.andReturn();
