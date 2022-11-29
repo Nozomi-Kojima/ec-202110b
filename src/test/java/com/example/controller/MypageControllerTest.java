@@ -28,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.domain.User;
 import com.example.util.CsvDataSetLoader;
-import com.example.util.SessionUtil;
+import com.example.util.Kojima_SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -62,7 +62,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("マイページ画面へ遷移")
 	void toMypageTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toMypage").session(userSession))
 				.andExpect(view().name("/mypage/mypage")).andReturn();		
 	    ModelAndView mav = mvcResult.getModelAndView();
@@ -71,7 +71,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ログインできなかったらログイン画面へ遷移")
 	void toMypageTest2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		userSession.clearAttributes();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toMypage").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
@@ -81,7 +81,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ユーザー更新画面へ遷移")
 	void toUpdateUserTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toUpdateUser").session(userSession))
 				.andExpect(view().name("/mypage/updateUser")).andReturn();
 	    ModelAndView mav = mvcResult.getModelAndView();
@@ -96,7 +96,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ユーザー更新完了画面へ遷移")
 	void toUpdateUserFinishedTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toUpdateUserFinished").session(userSession))
 				.andExpect(view().name("/mypage/updateUserFinished")).andReturn();
 	    ModelAndView mav = mvcResult.getModelAndView();
@@ -111,7 +111,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ユーザー情報削除確認画面へ遷移")
 	void toDeleteUserConfirmTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/mypage/toDeleteUserConfirm").session(userSession))
 				.andExpect(view().name("/mypage/deleteUserConfirm")).andReturn();
 	    ModelAndView mav = mvcResult.getModelAndView();
@@ -126,7 +126,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("もしユーザー更新結果がエラーだったら")
 	void updateUserConfirmTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();		
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();		
 		
 		MvcResult mvcResultError = mockMvc.perform(post("/mypage/updateUserConfirm")
 				.param("name", "小島")
@@ -144,7 +144,7 @@ class MypageControllerTest {
 	@DisplayName("メールアドレスを変更する時、変更メールアドレスが既に登録されていればエラーが出るか")
 	@DatabaseSetup("/myPage/toMypage_01")
 	void updateUserConfirmTest2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultDuplication = mockMvc.perform(post("/mypage/updateUserConfirm")
 				.param("email","nobuhiko.tobita@gmail.com")
 				.session(userSession))
@@ -157,7 +157,7 @@ class MypageControllerTest {
 	@DisplayName("メールアドレスを変更する時、無事に変更できた時")
 	@DatabaseSetup("/myPage/toMypage_01")
 	void updateUserConfirmTest3() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultSuccess = mockMvc.perform(post("/mypage/updateUserConfirm")
 				.param("name", "小島")
 				.param("email","kojima@test.com")
@@ -173,7 +173,7 @@ class MypageControllerTest {
 	@DisplayName("ユーザー情報更新時、パスワードが違うとエラーが出る")
 	@DatabaseSetup("/myPage/toMypage_01")
 	void updateUserConfirmTest4() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/mypage/updateUser")
 				.param("password", "morimoriadaaoi")
 				.session(userSession))
@@ -184,7 +184,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ユーザー情報更新時、パスワードがあってれば更新完了画面が出る")
 	void updateUserConfirmTest5() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/mypage/updateUser")
 				.param("password", "morimori")
 				.session(userSession))
@@ -195,7 +195,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("消去しますか？yesの場合")
 	void deleteUserConfirmTest1() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult2 = mockMvc.perform(post("/mypage/deleteUserConfirm")
 				.param("confirm", "yes")
 				.session(userSession))
@@ -207,7 +207,7 @@ class MypageControllerTest {
 	@DisplayName("消去しますか？noの場合")
 	@DatabaseSetup("/myPage/toMypage_01")
 	void deleteUserConfirmTest2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUserConfirm")
 				.param("confilm", "no")
 				.session(userSession))
@@ -219,7 +219,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ユーザー消去する時、パスワードが違うとエラーが出る")
 	void deleteUserTest1() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUser")
 				.param("inputPassword", "morimoriadaaoi")
 				.session(userSession))
@@ -230,7 +230,7 @@ class MypageControllerTest {
 	@Test
 	@DisplayName("ユーザー消去する時、パスワードがあってれば更新完了画面が出る")
 	void deleteUserTest2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/mypage/deleteUser")
 				.param("inputPassword", "morimori")
 				.session(userSession))
