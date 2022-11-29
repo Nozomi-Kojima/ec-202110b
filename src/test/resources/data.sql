@@ -115,6 +115,7 @@ create table order_toppings (
   , order_item_id integer not null
 ) ;
 
+
 drop table if exists reviews cascade;
 CREATE TABLE reviews(
 	id serial NOT NULL,
@@ -122,4 +123,5 @@ CREATE TABLE reviews(
 	review text,
 	user_id integer NOT NULL,
 	item_id integer NOT NULL);
+
 

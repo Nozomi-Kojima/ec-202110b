@@ -1,0 +1,3 @@
+name,email,password,zipcode,address,telephone
+テストユーザ,test@test.co.jp,$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq,1111111,テスト住所,テスト電話番号
+田中佑奈,tanaka@example.com,mogumogu,111-1111,東京都新宿区,080-0000-0000
