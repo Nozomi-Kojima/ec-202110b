@@ -65,24 +65,6 @@ class UserControllerTest {
 	@AfterEach
 	void tearDown() throws Exception {
 	}
-
-//	@Test
-//    @DisplayName("ユーザー登録　正常系")
-//	@ExpectedDatabase(value = "/User/insert_01/expected", assertionMode = DatabaseAssertionMode.NON_STRICT)
-//    void insert1() throws Exception {
-//		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-//        MvcResult mvcResult = mockMvc.perform(post("/user/registerConfirm")
-//                        .param("name", "飛田宣彦")
-//                        .param("email", "nobuhiko.tobita@gmail.com")
-//                        .param("password", "Abcd1234")
-//                        .param("passwordConfirm", "Abcd1234")
-//                        .param("zipcode", "111-1111")
-//                        .param("address", "東京都新宿区")
-//                        .param("telephone", "03-1111-1111")
-//                        .session(userSession))
-//                .andExpect(view().name("/user/register_confirm"))
-//                .andReturn();
-//}
 	
 	@Test
 	@DisplayName("メールアドレス重複")
@@ -90,19 +72,21 @@ class UserControllerTest {
 	void ConfirmTest1() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultDuplication = mockMvc.perform(post("/user/registerConfirm")
-				.param("email","ramen.test@example.com")
-				.session(userSession))
+				.param("email","ramen.test@gmail.com")
+//				.session(userSession)
+				)
 				.andExpect(view().name("/user/register_user")).andReturn();
 	}
 	@Test
-	@DisplayName("アドレスが一致していない")
+	@DisplayName("passが一致していない")
 	@DatabaseSetup("/User/insert_01/expected")
 	void ConfirmTest2() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultDuplication = mockMvc.perform(post("/user/registerConfirm")
-				.param("password","morimori")
-				.param("passwordConfirm", "morimo")
-				.session(userSession))
+				.param("password","Abcd1234")
+				.param("passwordConfirm", "Abcd12")
+//				.session(userSession)
+				)
 				.andExpect(view().name("/user/register_user")).andReturn();
 	}
 	@Test
@@ -118,13 +102,13 @@ class UserControllerTest {
 				.andExpect(view().name("/user/register_user")).andReturn();
 	}
 	@Test
-	@DisplayName("メールアドレスだけ重複")
+	@DisplayName("メールアドレスの重複")
 	@DatabaseSetup("/User/insert_01/expected")
 	void ConfirmTest4() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultDuplication = mockMvc.perform(post("/user/registerConfirm")
-				.param("name", "飛田宣彦")
-                .param("email", "ramen.test@example.com")
+				.param("name", "鈴木太郎")
+                .param("email", "ramen.test@gmail.com")
                 .param("password", "Abcd1234")
                 .param("passwordConfirm", "Abcd1234")
                 .param("zipcode", "111-1111")
@@ -134,13 +118,13 @@ class UserControllerTest {
 				.andExpect(view().name("/user/register_user")).andReturn();
 	}
 	@Test
-	@DisplayName("アドレスが一致していない")
+	@DisplayName("passが一致していない")
 	@DatabaseSetup("/User/insert_01/expected")
 	void ConfirmTest5() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultDuplication = mockMvc.perform(post("/user/registerConfirm")
-				.param("name", "飛田宣彦")
-                .param("email", "nobuhiko.tobita@gmail.com")
+				.param("name", "鈴木太郎")
+                .param("email", "suzuki@example.com")
                 .param("password", "Abcd1234")
                 .param("passwordConfirm", "Abcd123")
                 .param("zipcode", "111-1111")
@@ -157,7 +141,7 @@ class UserControllerTest {
 	void ConfirmTest6() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResultDuplication = mockMvc.perform(post("/user/registerConfirm")
-                .param("email", "nobuhiko.tobita@gmail.com")
+                .param("email", "test@gmail.com")
                 .param("password", "Abcd1234")
                 .param("passwordConfirm", "Abcd1234")
 				.session(userSession))
@@ -165,7 +149,7 @@ class UserControllerTest {
 }
 	    @Test
 	    @DisplayName("ユーザー登録")
-        @ExpectedDatabase(value = "/User/insert_01/expected", assertionMode = DatabaseAssertionMode.NON_STRICT)
+        @ExpectedDatabase(value = "/Insert/insert-01/expected", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	    void insert() throws Exception {
 		 MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 	        MvcResult mvcResult = mockMvc.perform(get("/user/register")
@@ -173,6 +157,45 @@ class UserControllerTest {
 	                ).andExpect(view().name("redirect:/user/toFinish"))
 	                .andReturn();
 
+	    }
+	    @Test
+	    @DisplayName("ログイン画面への遷移")
+	    void login_page() throws Exception {
+	        MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+	        MvcResult mvcResult = mockMvc.perform(get("/user/toLogin")
+	                        .session(userSession))
+	                .andExpect(view().name("/user/login"))
+	                .andReturn();
+	    }
+	    
+	    @Test
+	    @DisplayName("登録完了画面への遷移")
+	    void finish_page() throws Exception {
+	        MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+	        MvcResult mvcResult = mockMvc.perform(get("/user/toFinish")
+	                        .session(userSession))
+	                .andExpect(view().name("/user/register_finish"))
+	                .andReturn();
+	    }
+	    
+	    @Test
+	    @DisplayName("ログアウト画面への遷移")
+	    void logout_page() throws Exception {
+	       // MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+	        MvcResult mvcResult = mockMvc.perform(get("/user/logout")
+	                      //  .session(userSession)
+	        		)
+	                .andExpect(view().name("redirect:/item"))
+	                .andReturn();
+	    }
+	    @Test
+	    @DisplayName("ログイン(異常系)")
+	    void login() throws Exception {
+	        MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+	        MvcResult mvcResult = mockMvc.perform(get("/user/login")
+	                        .session(userSession))
+	                .andExpect(view().name("/user/login"))
+	                .andReturn();
 	    }
 	   
 	

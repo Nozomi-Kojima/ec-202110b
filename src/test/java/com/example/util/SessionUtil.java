@@ -19,19 +19,37 @@ public class SessionUtil {
 		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
 		User user = new User();
 		List<User> userList = new ArrayList<>();
-		user.setId(10);
-		user.setName("テストユーザ");
-		user.setEmail("nobuhiko.tobita@gmail.com");
+		user.setId(3);
+		user.setName("テストユーザ1");
+		user.setEmail("testtest@gmail.com");
 		user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
 		user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
-		user.setAddress("テスト住所");
-		user.setZipcode("111-1111");
-		user.setTelephone("080-0000-0000");
+		user.setAddress("神奈川県相模原市");
+		user.setZipcode("123-4567");
+		user.setTelephone("090-1234-5678");
 		userList.add(user);
 		sessionMap.put("userId", user.getId());
 		sessionMap.put("user", userList);
 		return createMockHttpSession(sessionMap);
 	}
+	public static MockHttpSession createCartSession() {
+		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
+		User user = new User();
+		List<User> userList = new ArrayList<>();
+		user.setId(3);
+		user.setName("テストユーザ1");
+		user.setEmail("testtest@gmail.com");
+		user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
+		user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
+		user.setAddress("神奈川県相模原市");
+		user.setZipcode("123-4567");
+		user.setTelephone("090-1234-5678");
+		userList.add(user);
+		sessionMap.put("userId", user.getId());
+		sessionMap.put("user", userList);
+		return createMockHttpSession(sessionMap);
+	}
+	
 
 	private static MockHttpSession createMockHttpSession(Map<String, Object> sessions) {
 		MockHttpSession mockHttpSession = new MockHttpSession();
