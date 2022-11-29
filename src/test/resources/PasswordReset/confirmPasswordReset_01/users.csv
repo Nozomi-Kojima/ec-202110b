@@ -1,0 +1,3 @@
+id,name,email,password,zipcode,address,telephone
+1,テストユーザ,coffeeshop.test@example.com,$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq,1111111,テスト住所,テスト電話番号
+2,飛田宣彦,nobuhiko.tobita@gmail.com,dummy,1111111,東京,03-1111-1111

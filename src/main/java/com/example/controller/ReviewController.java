@@ -61,7 +61,6 @@ public class ReviewController {
 		reviewService.insert(review);
 		
 		return "redirect:/item/showDetail?id=" + itemId;
-		
 	}
 	
 }

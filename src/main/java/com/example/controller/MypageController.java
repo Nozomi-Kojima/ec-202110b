@@ -63,7 +63,6 @@ public class MypageController {
 			//ログインしていなければログイン画面に遷移
 			return "forward:/user/toLogin";
 		}
-		
 		return "/mypage/mypage";
 	}
 	
