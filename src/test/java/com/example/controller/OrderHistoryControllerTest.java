@@ -26,6 +26,8 @@ import com.example.util.SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
 @SpringBootTest
 @DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
@@ -79,20 +81,27 @@ class OrderHistoryControllerTest {
 	}
 	@Test
 	@DisplayName("注文がある場合")
-	@DatabaseSetup("/order")
+	@ExpectedDatabase(value = "/order/history", assertionMode = DatabaseAssertionMode.NON_STRICT)
+	@DatabaseSetup("/order/history")
 	void showOrderHistoryTest3() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("orderHistory/order_history")).andReturn();
+		 ModelAndView mav = mvcResult.getModelAndView();
+	        assertEquals("orderHistory/order_history", mav.getViewName());
 	}
 	@Test
 	@DisplayName("注文履歴詳細")
-	@DatabaseSetup("/order")
+	@ExpectedDatabase(value = "/order/history", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void showDetailTest() throws Exception {
 		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-		MvcResult mvcResult = mockMvc.perform(get("/orderHistory/showDetail").session(userSession))
+		MvcResult mvcResult = mockMvc.perform(get("/orderHistory/showDetail")
+				.param("orderId","1")
+				.session(userSession))
 				.andExpect(view().name("orderHistory/order_history_detail")).andReturn();
+		 ModelAndView mav = mvcResult.getModelAndView();
+	        assertEquals("orderHistory/order_history_detail", mav.getViewName());
 	}
-	
+		
 
 }

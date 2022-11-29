@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.springframework.mock.web.MockHttpSession;
 
+import com.example.domain.Item;
+import com.example.domain.OrderItem;
 import com.example.domain.User;
 
 public class SessionUtil {
@@ -26,7 +28,30 @@ public class SessionUtil {
 		userList.add(user); 
 		sessionMap.put("userId", user.getId());
 		sessionMap.put("user",userList);
+		OrderItem orderItem = new OrderItem();
+		List<OrderItem> orderItemList = new ArrayList<>();
+		orderItem.setId(1);
+		orderItem.setItemId(1);
+		orderItem.setOrderId(1);
+		orderItem.setQuantity(1);
+		orderItem.setSize('M');
+		orderItemList.add(orderItem);
+		List<Integer> subTotalList = new ArrayList<>();
+		subTotalList.add(1000);
+		subTotalList.add(2000);
+		subTotalList.add(3000);
+		sessionMap.put("subTotalList", subTotalList);
+		Item itemName = new Item();
+		List<Item> itemList = new ArrayList<>();
+		itemName.setPriceL(200);
+		itemName.setPriceM(100);
+		itemName.setName("とんかつ");
+		itemName.setDescription("とんかつはあげものです");
+		itemList.add(itemName);
+		sessionMap.put("itemList", itemList);
 		return createMockHttpSession(sessionMap);
+		
+		
 	}
 
 	private static MockHttpSession createMockHttpSession(Map<String, Object> sessions) {
