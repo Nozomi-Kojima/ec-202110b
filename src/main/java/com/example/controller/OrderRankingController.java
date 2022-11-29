@@ -42,14 +42,15 @@ public class OrderRankingController {
 		
 	}
 	
-	@RequestMapping("/showTotalRankingByMonth")
+	
+   @RequestMapping("/showTotalRankingByMonth")
 	public String  showMonthRanking(Integer orderYear,Integer orderMonth,Model model) {
 		Integer orderYearByInt = orderYear;
 		Integer orderMonthByInt = orderMonth;
 		
 		List<Item> topTenItemsByMonth = orderRankingService.topTenpopularItemsByMonth(orderYearByInt, orderMonthByInt);
 		
-		List<Integer> yearList = new ArrayList<>();
+    	List<Integer> yearList = new ArrayList<>();
 		for(int i = 2010;i <=2021;i++) {
 			yearList.add(i);
 		}
@@ -59,11 +60,10 @@ public class OrderRankingController {
 		}
 		
 		model.addAttribute("topTenItemsByMonth",topTenItemsByMonth);
-		model.addAttribute("yearList",yearList);
-		model.addAttribute("monthList",monthList);
+	model.addAttribute("yearList",yearList);
+	model.addAttribute("monthList",monthList);
 		
 		return "/orderRanking/month_order_ranking";
 		
 	}
-
 }
