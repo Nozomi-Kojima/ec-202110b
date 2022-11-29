@@ -122,3 +122,4 @@ CREATE TABLE reviews(
 	review text,
 	user_id integer NOT NULL,
 	item_id integer NOT NULL);
+
