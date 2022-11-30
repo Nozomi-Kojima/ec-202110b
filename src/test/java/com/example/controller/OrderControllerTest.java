@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.example.util.CsvDataSetLoader;
 import com.example.util.SessionUtil;
+import com.example.util.Tanaka_SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -73,7 +74,7 @@ class OrderControllerTest {
 	@DatabaseSetup("/User/user")
 	@ExpectedDatabase(value = "/User/user", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void testOrderConfurm2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/toOrder").session(userSession))
 				.andExpect(view().name("order/order_confirm"))// ここがnullなので1のCSV作ってｄｂsetuoする
 				.andReturn();
@@ -83,7 +84,7 @@ class OrderControllerTest {
 	@Test
 	@DisplayName("注文確定時に配達時刻エラーチェックが正常に機能するかのテスト")
 	void testOrderConfurm3() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
 				.param("destinationName", "田中佑奈")
 				.param("destinationEmail", "tanaka@example.com")
@@ -101,7 +102,7 @@ class OrderControllerTest {
 	@Test
 	@DisplayName("「今から3時間後以降の日時をご入力ください」と表示されるかのテスト")
 	void testOrderConfurm4() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
 				.param("destinationName", "田中佑奈")
 				.param("destinationEmail", "tanaka@example.com")
@@ -119,7 +120,7 @@ class OrderControllerTest {
 	@Test
 	@DisplayName("代引選択時にカード情報入力されていたらエラー表示をするテスト")
 	void testOrderConfurm5() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
 				.param("destinationName", "田中佑奈")
 				.param("destinationEmail", "tanaka@example.com")
@@ -139,7 +140,7 @@ class OrderControllerTest {
 	@DisplayName("注文正常完了")
 	@DatabaseSetup("/User/user")
 	void testOrderConfurm6() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
 				.param("destinationName", "田中佑奈")
 				.param("destinationEmail", "tanaka@example.com")
@@ -158,7 +159,7 @@ class OrderControllerTest {
 	@Test
 	@DisplayName("注文完了画面に遷移するか確認するテスト")
 	void testOrderConfirm() throws Exception { 
-        MockHttpSession userIdSession = SessionUtil.createUserIdAndUserSession();
+        MockHttpSession userIdSession = Tanaka_SessionUtil.createUserIdAndUserSession();
         MvcResult mvcResult = mockMvc.perform(post("/order/toOrderFinished")
                         .session(userIdSession))//sessionセットしてから呼ぶとテストできる
                 .andExpect(view().name("order/order_finished"))
