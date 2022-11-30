@@ -84,6 +84,8 @@ class OrderRankingControllerTest {
 		    Item topItem = topTenItems.get(0);
 		    Item topItem = topTenItems.get(9);
 		    assertEquals("一位の商品",topItem.getName(), "一位の商品があってない");
+		  
+		    
 		    
 		    
 		    	
@@ -92,14 +94,9 @@ class OrderRankingControllerTest {
 	@Test
 	@DisplayName("月間ランキング表示")
 	void testshowmonthRanking() throws Exception {
-		 MvcResult mvcResult = (MvcResult) mockMvc.perform((RequestBuilder) ((ResultActions) post("/orderRanking/showTotalRankingByMonth")
-				 .param("orderYear", "1")
-				 .param("orderYear","2")
-				 .param("orderYear", "1")
-				 .param("orderYear", "12")
-				 .param("orderMonth", "2011")
-				 .param("orderMonth", "2019")
-				 .param("orderMonth", "2022"))
+		 MvcResult mvcResult = mockMvc.perform(post("/orderRanking/showTotalRankingByMonth")
+				 .param("orderYear", "2022")
+				 .param("orderMonth", "11"))
 				 .andExpect(view().name("/orderRanking/month_order_ranking"))
                  .andReturn();
 	 
