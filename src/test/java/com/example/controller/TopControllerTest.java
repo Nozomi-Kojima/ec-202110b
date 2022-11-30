@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.util.CsvDataSetLoader;
+import com.example.util.Kojima_SessionUtil;
 import com.example.util.SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -60,7 +61,7 @@ class TopControllerTest {
 	@Test
 	@DisplayName("toppage")
 	void toPageTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/top").session(userSession))
 				.andExpect(view().name("top")).andReturn();		
 	    ModelAndView mav = mvcResult.getModelAndView();

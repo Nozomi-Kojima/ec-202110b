@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.util.CsvDataSetLoader;
+import com.example.util.Kojima_SessionUtil;
 import com.example.util.SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -62,7 +63,7 @@ class OrderHistoryControllerTest {
 	@Test
 	@DisplayName("ログインしていなかった場合、ログイン画面へ遷移")
 	void showOrderHistoryTest1() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		userSession.clearAttributes();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("forward:/user/toLogin")).andReturn();
@@ -73,7 +74,7 @@ class OrderHistoryControllerTest {
 	@Test
 	@DisplayName("注文がない場合")
 	void showOrderHistoryTest2() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("orderHistory/order_no_history")).andReturn();
 		 ModelAndView mav = mvcResult.getModelAndView();
@@ -84,7 +85,7 @@ class OrderHistoryControllerTest {
 	@ExpectedDatabase(value = "/order/history", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	@DatabaseSetup("/order/history")
 	void showOrderHistoryTest3() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory").session(userSession))
 				.andExpect(view().name("orderHistory/order_history")).andReturn();
 		 ModelAndView mav = mvcResult.getModelAndView();
@@ -94,7 +95,7 @@ class OrderHistoryControllerTest {
 	@DisplayName("注文履歴詳細")
 	@ExpectedDatabase(value = "/order/history", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void showDetailTest() throws Exception {
-		MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = Kojima_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(get("/orderHistory/showDetail")
 				.param("orderId","1")
 				.session(userSession))
