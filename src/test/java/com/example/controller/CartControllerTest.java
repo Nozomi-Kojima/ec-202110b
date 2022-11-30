@@ -96,7 +96,7 @@ class CartControllerTest {
 	@Test
 	@DisplayName("カートから削除")
 	void deleteFromCart() throws Exception{
-		 MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
+		 MockHttpSession cartSession = com.example.util.SessionUtilShirai.createCartSession();
 		 MvcResult mvcResult = mockMvc.perform(post("/cart/delete")
                  .session(cartSession)
                  .param("index", "0").param("orderItemId",""))
@@ -120,7 +120,7 @@ class CartControllerTest {
 	@DisplayName("カートを見る　未ログイン　カート追加あり")
 	@DatabaseSetup("/loginInsertCart")
 	void showCart2() throws Exception{
-		MockHttpSession cartSession = com.example.util.SessionUtil.createCartSession();
+		MockHttpSession cartSession = com.example.util.SessionUtilShirai.createCartSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
 				.session(cartSession))
 				.andExpect(view().name("/cart/cart_list"))
@@ -143,7 +143,7 @@ class CartControllerTest {
 	@DisplayName("カートを見る　ログイン　カート追加あり")
 	@DatabaseSetup("/loginInsertCart")
 	void showCart4() throws Exception{
-		MockHttpSession session = com.example.util.SessionUtil.createUserCartSession();
+		MockHttpSession session = com.example.util.SessionUtilShirai.createUserCartSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
 				.session(session))
 				.andExpect(view().name("/cart/cart_list"))
@@ -157,7 +157,7 @@ class CartControllerTest {
 	@DisplayName("カートを統合")
 	@DatabaseSetup("/loginInsertCart")
 	void combineCart() throws Exception{
-		 MockHttpSession session = com.example.util.SessionUtil.createCombineSession();
+		 MockHttpSession session = com.example.util.SessionUtilShirai.createCombineSession();
 		 MvcResult mvcResult = mockMvc.perform(post("/cart/combineCart")
                  .session(session))
 				 .andExpect(view().name("order/order_confirm"))
