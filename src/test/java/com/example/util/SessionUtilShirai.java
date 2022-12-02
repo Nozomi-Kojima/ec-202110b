@@ -82,13 +82,13 @@ public class SessionUtilShirai {
 //			orderitem.setId(1);
 			orderitem.setItem(item);
 			orderitem.setItemId(1);
-//			orderitem.setOrderId(1);
+			orderitem.setOrderId(1);
 			orderitem.setOrderToppingList(orderTopping);
 			orderitem.setQuantity(1);
 			orderitem.setSize('M');
 			orderItemList.add(orderitem);
 		User user = new User();
-//			user.setId(1);
+			user.setId(1);
 			user.setName("テストユーザ");
 			user.setEmail("test@test.co.jp");
 			user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");

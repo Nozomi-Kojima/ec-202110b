@@ -59,20 +59,25 @@ class CartControllerTest {
 	
 	private MockMvc mockMvc;
 	
-	@BeforeEach
-	void setup(@Autowired javax.sql.DataSource datasource) throws Exception {
-		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
-		populator.execute(datasource);
-	}
-	
-//	@AfterEach
-//	void tearDown(@Autowired javax.sql.DataSource datasource) throws Exception {
+//	@BeforeEach
+//	void setup(@Autowired javax.sql.DataSource datasource) throws Exception {
+//		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 //		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
 //		populator.execute(datasource);
 //	}
+	
+	@BeforeEach
+	void setup() throws Exception {
+		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+		
+	}
+	@AfterEach
+	void tearDown(@Autowired javax.sql.DataSource datasource) throws Exception {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
+		populator.execute(datasource);
+	}
 
 	@Test
 	@DisplayName("カート追加　未ログイン　カートなし")
@@ -101,19 +106,15 @@ class CartControllerTest {
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
 				.session(cartSession)
 				.param("itemId", "1").param("size","M").param("quantity", "1")
-				.param("orderToppingList", "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"))
+				.param("orderToppingList", ""))
 				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
 		MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession(); 
 		
-		@SuppressWarnings("unchecked")
 		List<OrderItem> orderItemList = (List<OrderItem>)mockSession.getAttribute("orderItemList");
-//		Item i = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。"
-//				, 700, 800, "1.jpg",false, null);
-//		OrderItem item = new OrderItem(null, 1, null, 1, 'M', i, null);
-//		List<OrderItem> result = new LinkedList<>(List.of(item));
-		
-//		assertEquals("とんこつラーメン", orderItemList.get(0).getItem().getName());
-		assertEquals(1400, orderItemList.get(0).getSubTotal());
+		int i1 = orderItemList.get(0).getSubTotal();
+		int i2 = orderItemList.get(1).getSubTotal();
+		int sum = i1 + i2 ;
+		assertEquals(1400, sum);
 	}
 	@Test
 	@DisplayName("カート追加　ログイン")
@@ -123,7 +124,7 @@ class CartControllerTest {
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
 				.session(userSession)
 				.param("itemId", "1").param("size","M").param("quantity", "1")
-				.param("orderToppingList", "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"))
+				.param("orderToppingList", "1"))
 				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
 	}
 	
