@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -123,8 +124,7 @@ class CartControllerTest {
 		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
 				.session(userSession)
-				.param("itemId", "1").param("size","M").param("quantity", "1")
-				.param("orderToppingList", "1"))
+				.param("itemId", "1").param("size","M").param("quantity", "1").param("orderToppingList", "1"))
 				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
 	}
 	
