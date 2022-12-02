@@ -16,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -64,9 +66,13 @@ class UserControllerTest {
 	void setUp() throws Exception {
 		 mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 	}
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+//	@AfterEach
+//	void tearDown(@Autowired javax.sql.DataSource datasource) throws Exception {
+//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//		populator.addScript(new ClassPathResource("/sql_shirai/user_insert_reset.sql"));
+//		populator.execute(datasource);
+//		
+//	}
 	
 	@Test
 	@DisplayName("メールアドレス重複")
@@ -148,18 +154,17 @@ class UserControllerTest {
                 .param("passwordConfirm", "Abcd1234")
 				.session(userSession))
 				.andExpect(view().name("/user/register_confirm")).andReturn();
-}
-	    @Test
-	    @DisplayName("ユーザー登録")
-        @ExpectedDatabase(value = "/Insert/insert-01/expected", assertionMode = DatabaseAssertionMode.NON_STRICT)
-	    void insert() throws Exception {
-		 MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
-	        MvcResult mvcResult = mockMvc.perform(get("/user/register")
-                  .session(userSession)
-	                ).andExpect(view().name("redirect:/user/toFinish"))
-	                .andReturn();
+		}
 
-	    }
+		@Test
+		@DisplayName("ユーザー登録")
+		@DatabaseSetup("/Insert/insert_01/usertable_reset")
+		@ExpectedDatabase(value = "/Insert/insert_01/user_insert_02", assertionMode = DatabaseAssertionMode.NON_STRICT)
+		void insert() throws Exception {
+			MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
+			MvcResult mvcResult = mockMvc.perform(get("/user/register").session(userSession))
+					.andExpect(view().name("redirect:/user/toFinish")).andReturn();
+		}
 	    @Test
 	    @DisplayName("ログイン画面への遷移")
 	    void login_page() throws Exception {

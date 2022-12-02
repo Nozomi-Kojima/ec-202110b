@@ -134,10 +134,10 @@ public class SessionUtilShirai {
 
 			Item item = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。", 700, 800, "1.jpg",false, null);
 		OrderItem orderitem = new OrderItem();
-			orderitem.setId(2);
+//			orderitem.setId(2);
 			orderitem.setItem(item);
 			orderitem.setItemId(1);
-			orderitem.setOrderId(2);
+			orderitem.setOrderId(1);
 			orderitem.setOrderToppingList(orderTopping);
 			orderitem.setQuantity(1);
 			orderitem.setSize('M');
