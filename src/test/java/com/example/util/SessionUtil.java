@@ -19,8 +19,8 @@ public class SessionUtil {
 		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
 		User user = new User();
 		List<User> userList = new ArrayList<>();
-		user.setId(3);
-		user.setName("テストユーザ1");
+//		user.setId(2);
+		user.setName("テストユーザ");
 		user.setEmail("testtest@gmail.com");
 		user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
 		user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");

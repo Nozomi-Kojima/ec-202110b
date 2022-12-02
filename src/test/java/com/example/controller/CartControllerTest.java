@@ -60,19 +60,11 @@ class CartControllerTest {
 	
 	private MockMvc mockMvc;
 	
-//	@BeforeEach
-//	void setup(@Autowired javax.sql.DataSource datasource) throws Exception {
-//		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
-//		populator.execute(datasource);
-//	}
-	
 	@BeforeEach
 	void setup() throws Exception {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-		
 	}
+	
 	@AfterEach
 	void tearDown(@Autowired javax.sql.DataSource datasource) throws Exception {
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
@@ -121,10 +113,11 @@ class CartControllerTest {
 	@DisplayName("カート追加　ログイン")
 	@ExpectedDatabase(value = "/userInsertToCart", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void insertToCart2() throws Exception{
-		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = com.example.util.SessionUtilShirai.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
 				.session(userSession)
-				.param("itemId", "1").param("size","M").param("quantity", "1").param("orderToppingList", "1"))
+				.param("itemId", "1").param("size","M").param("quantity", "1")
+				.param("orderToppingList", "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"))
 				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
 	}
 	
@@ -179,7 +172,7 @@ class CartControllerTest {
 	@DisplayName("カートを見る　ログイン　カート追加なし")
 //	@DatabaseSetup("/popularSearch")
 	void showCart3() throws Exception{
-		MockHttpSession userSession = com.example.util.SessionUtil.createUserIdAndUserSession();
+		MockHttpSession userSession = com.example.util.SessionUtilShirai.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")
 				.session(userSession))
 				.andExpect(view().name("/cart/cart_list_noItem"))
