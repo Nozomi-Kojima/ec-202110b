@@ -2,6 +2,8 @@ package com.example.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.junit.jupiter.api.AfterAll;
@@ -20,9 +22,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.example.util.CsvDataSetLoader;
-import com.example.util.SessionUtil;
 import com.example.util.Tanaka_SessionUtil;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -30,13 +32,13 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, // このテストクラスでDIを使えるように指定
-		TransactionDbUnitTestExecutionListener.class
-		//
+@SpringBootTest
+@DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
+@TestExecutionListeners({
+      DependencyInjectionTestExecutionListener.class,
+      TransactionDbUnitTestExecutionListener.class 
 })
 @Transactional
-@DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
-@SpringBootTest
 class OrderControllerTest {
 
 	@Autowired
@@ -75,8 +77,8 @@ class OrderControllerTest {
 	@ExpectedDatabase(value = "/User/user", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void testOrderConfurm2() throws Exception {
 		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
-		MvcResult mvcResult = mockMvc.perform(post("/order/toOrder").session(userSession))
-				.andExpect(view().name("order/order_confirm"))// ここがnullなので1のCSV作ってｄｂsetuoする
+		MvcResult mvcResult = mockMvc.perform(get("/order/toOrder").session(userSession))
+				.andExpect(view().name("order/order_confirm"))
 				.andReturn();
 	}
 
@@ -86,14 +88,8 @@ class OrderControllerTest {
 	void testOrderConfurm3() throws Exception {
 		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
-				.param("destinationName", "田中佑奈")
-				.param("destinationEmail", "tanaka@example.com")
-				.param("zipcode", "111-1111")
-				.param("address", "東京都新宿区")// 配達時刻を33時とか-1時
-				.param("destinationTel", "080-0000-0000")
-				.param("deliveryDate", "2022-11-28")
-				.param("deliveryTime", "33")
-				.param("paymentMethod", "1")
+				.param("deliveryDate", "2022-12-01")
+				.param("deliveryTime", "12")
 				.session(userSession))
 				.andExpect(view().name("order/order_confirm"))// ここがnullなので1のCSV作ってｄｂsetuoする
 				.andReturn();
@@ -122,39 +118,133 @@ class OrderControllerTest {
 	void testOrderConfurm5() throws Exception {
 		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
-				.param("destinationName", "田中佑奈")
-				.param("destinationEmail", "tanaka@example.com")
-				.param("zipcode", "111-1111")
-				.param("address", "東京都新宿区")
-				.param("destinationTel", "080-0000-0000")
-				.param("deliveryDate", "2022-11-30")
-				.param("deliveryTime", "11")
 				.param("paymentMethod", "1")
 				.param("token", "hiden")
 				.session(userSession))
 				.andExpect(view().name("order/order_confirm"))// ここがnullなので1のCSV作ってｄｂsetuoする
 				.andReturn();
 	}
+	@Test
+	@DisplayName("代引き注文正常完了")
+	@DatabaseSetup("/User/user2")
+	void testOrderConfurm6() throws Exception {
+		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
+		MvcResult mvcResult2 = mockMvc.perform(post("/order/confirm")
+				.param("userId", "2")
+				.param("destinationName", "テストユーザー")
+				.param("destinationEmail", "test@test.co.jp")
+				.param("zipcode", "222-2222")
+				.param("address", "東京都中野区")
+				.param("destinationTel", "070-0000-0000")
+				.param("deliveryDate", "2022-12-04")
+				.param("deliveryTime", "18")
+				.param("price", "850")
+				.param("paymentMethod", "1")
+				.param("token", "")
+				.session(userSession))
+				.andExpect(view().name("redirect:/order/toOrderFinished"))// ここがnullなので1のCSV作ってｄｂsetuoする
+				.andReturn();
+	}
+	
 	
 	@Test
-	@DisplayName("注文正常完了")
-	@DatabaseSetup("/User/user")
-	void testOrderConfurm6() throws Exception {
-		MockHttpSession userSession = Tanaka_SessionUtil.createUserIdAndUserSession();
+	@DisplayName("クレジットカード注文正常完了")
+	@DatabaseSetup("/User/user2")
+	void testOrderConfurm7() throws Exception {
+		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
 		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
+				.param("userId", "1")
 				.param("destinationName", "田中佑奈")
 				.param("destinationEmail", "tanaka@example.com")
 				.param("zipcode", "111-1111")
 				.param("address", "東京都新宿区")
 				.param("destinationTel", "080-0000-0000")
-				.param("deliveryDate", "2022-11-30")
-				.param("deliveryTime", "11")
+				.param("deliveryDate", "2022-12-04")
+				.param("price", "750")
+				.param("deliveryTime", "18")
 				.param("paymentMethod", "2")
 				.param("token", "hiden")
 				.session(userSession))
 				.andExpect(view().name("redirect:/order/toOrderFinished"))// ここがnullなので1のCSV作ってｄｂsetuoする
 				.andReturn();
 	}
+
+	@Test
+	@DisplayName("クレジットカード情報未入力")
+	@DatabaseSetup("/User/user2")
+	void testOrderConfurm8() throws Exception {
+		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
+		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
+				.param("userId", "1")
+				.param("destinationName", "田中佑奈")
+				.param("destinationEmail", "tanaka@example.com")
+				.param("zipcode", "111-1111")
+				.param("address", "東京都新宿区")
+				.param("destinationTel", "080-0000-0000")
+				.param("deliveryDate", "2022-12-04")
+				.param("price", "750")
+				.param("deliveryTime", "18")
+				.param("paymentMethod", "2")
+				.param("token", "")
+				.session(userSession))
+				.andExpect(view().name("order/order_confirm"))// ここがnullなので1のCSV作ってｄｂsetuoする
+				.andReturn();
+	}
+	@Test
+	@DisplayName("配達時間エラー")
+	@DatabaseSetup("/User/user2")
+	void testOrderConfurm9() throws Exception {
+		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
+		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
+				.param("userId", "1")
+				.param("destinationName", "田中佑奈")
+				.param("destinationEmail", "tanaka@example.com")
+				.param("zipcode", "111-1111")
+				.param("address", "東京都新宿区")
+				.param("destinationTel", "080-0000-0000")
+				.param("deliveryDate", "2022-12-01")
+				.param("price", "750")
+				.param("deliveryTime", "18")
+				.param("paymentMethod", "2")
+				.param("token", "")
+				.session(userSession))
+				.andExpect(view().name("order/order_confirm"))// ここがnullなので1のCSV作ってｄｂsetuoする
+				.andReturn();
+	}
+	@Test
+	@DisplayName("フォーマットエラー")
+	@DatabaseSetup("/User/user2")
+	void testOrderConfurm10() throws Exception {
+		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
+		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
+				.param("deliveryDate", "20231313")
+				.param("deliveryTime", "28")
+				.session(userSession))
+				.andExpect(status().is5xxServerError())
+				.andReturn();
+	}
+	@Test
+	@DisplayName("配達時間のみエラー")
+	@DatabaseSetup("/User/user2")
+	void testOrderConfurm11() throws Exception {
+		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
+		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
+				.param("userId", "1")
+				.param("destinationName", "田中佑奈")
+				.param("destinationEmail", "tanaka@example.com")
+				.param("zipcode", "111-1111")
+				.param("address", "東京都新宿区")
+				.param("destinationTel", "080-0000-0000")
+				.param("price", "750")
+				.param("paymentMethod", "2")
+				.param("token", "hiden")
+				.param("deliveryDate", "21001822")
+				.param("deliveryTime", "0")
+				.session(userSession))
+				.andExpect(status().is5xxServerError())
+				.andReturn();
+	}
+	
 	
 	@Test
 	@DisplayName("注文完了画面に遷移するか確認するテスト")
