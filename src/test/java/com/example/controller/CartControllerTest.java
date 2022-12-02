@@ -10,11 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -39,7 +42,6 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 	DependencyInjectionTestExecutionListener.class,
 	TransactionDbUnitTestExecutionListener.class
 })
-@Transactional
 
 /*
  * コントローラー実行後のセッション情報の取り出しは以下でいけそうです
@@ -49,6 +51,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
  * Integer userId = (Integer)mockSession.getAttribute("userId");
  */
 
+@Transactional
 class CartControllerTest {
 	
 	@Autowired
@@ -57,12 +60,22 @@ class CartControllerTest {
 	private MockMvc mockMvc;
 	
 	@BeforeEach
-	void setup() throws Exception {
+	void setup(@Autowired javax.sql.DataSource datasource) throws Exception {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
+		populator.execute(datasource);
 	}
+	
+//	@AfterEach
+//	void tearDown(@Autowired javax.sql.DataSource datasource) throws Exception {
+//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
+//		populator.execute(datasource);
+//	}
 
 	@Test
-	@DisplayName("カート追加　未ログイン")
+	@DisplayName("カート追加　未ログイン　カートなし")
 	void insertToCart() throws Exception{
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
 				.param("itemId", "1").param("size","M").param("quantity", "1")
@@ -80,6 +93,27 @@ class CartControllerTest {
 		List<OrderItem> result = new LinkedList<>(List.of(item));
 		
 		assertEquals(result.toString(), orderItemList.toString());
+	}
+	@Test
+	@DisplayName("カート追加　未ログイン　カートあり")
+	void insertToCart1() throws Exception{
+		MockHttpSession cartSession = com.example.util.SessionUtilShirai.createCartSession();
+		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
+				.session(cartSession)
+				.param("itemId", "1").param("size","M").param("quantity", "1")
+				.param("orderToppingList", "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"))
+				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
+		MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession(); 
+		
+		@SuppressWarnings("unchecked")
+		List<OrderItem> orderItemList = (List<OrderItem>)mockSession.getAttribute("orderItemList");
+//		Item i = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。"
+//				, 700, 800, "1.jpg",false, null);
+//		OrderItem item = new OrderItem(null, 1, null, 1, 'M', i, null);
+//		List<OrderItem> result = new LinkedList<>(List.of(item));
+		
+//		assertEquals("とんこつラーメン", orderItemList.get(0).getItem().getName());
+		assertEquals(1400, orderItemList.get(0).getSubTotal());
 	}
 	@Test
 	@DisplayName("カート追加　ログイン")
@@ -109,12 +143,23 @@ class CartControllerTest {
 	@Test
 	@DisplayName("カートを見る　未ログイン　カート追加なし")
 	@DatabaseSetup("/popularSearch")
-	void showCart1() throws Exception{
+	void showCart0() throws Exception{
 		 MvcResult mvcResult = mockMvc.perform(post("/cart/showCart"))
 				 .andExpect(view().name("/cart/cart_list_noItem"))
 				 .andReturn();
 		 
-		 assertTrue("/cart/cart_list_noItem" == mvcResult.getModelAndView().getViewName());
+//		 assertTrue("/cart/cart_list_noItem" == mvcResult.getModelAndView().getViewName());
+	}
+	@Test
+	@DisplayName("カートを見る　未ログイン　既にカートリストあり　カート追加なし")
+	@DatabaseSetup("/popularSearch")
+	void showCart1() throws Exception{
+		MockHttpSession session = com.example.util.SessionUtilShirai.createCartNonLogin();
+		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart").session(session))
+				.andExpect(view().name("/cart/cart_list_noItem"))
+				.andReturn();
+		
+//		 assertTrue("/cart/cart_list_noItem" == mvcResult.getModelAndView().getViewName());
 	}
 	@Test
 	@DisplayName("カートを見る　未ログイン　カート追加あり")

@@ -56,7 +56,7 @@ public class SessionUtilShirai {
 		Item item = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。"
 				, 700, 800, "1.jpg",false, toppingList);
 		List<OrderItem> orderItemList = new ArrayList<>();
-		orderitem.setId(1);
+//		orderitem.setId(1);
 		orderitem.setItem(item);
 		orderitem.setItemId(1);
 		orderitem.setOrderId(1);
@@ -79,16 +79,16 @@ public class SessionUtilShirai {
 		
 			Item item = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。", 700, 800, "1.jpg",false, null);
 		OrderItem orderitem = new OrderItem();
-			orderitem.setId(1);
+//			orderitem.setId(1);
 			orderitem.setItem(item);
 			orderitem.setItemId(1);
-			orderitem.setOrderId(1);
+//			orderitem.setOrderId(1);
 			orderitem.setOrderToppingList(orderTopping);
 			orderitem.setQuantity(1);
 			orderitem.setSize('M');
 			orderItemList.add(orderitem);
 		User user = new User();
-			user.setId(1);
+//			user.setId(1);
 			user.setName("テストユーザ");
 			user.setEmail("test@test.co.jp");
 			user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
@@ -131,6 +131,13 @@ public class SessionUtilShirai {
 			userList.add(user);
 		sessionMap.put("orderitemId", orderitem.getId());
 		sessionMap.put("user", userList);
+		sessionMap.put("orderItemList", orderItemList);
+		return createMockHttpSession(sessionMap);
+	}
+	
+	public static MockHttpSession createCartNonLogin() {
+		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
+		List<OrderItem> orderItemList = new ArrayList<>();
 		sessionMap.put("orderItemList", orderItemList);
 		return createMockHttpSession(sessionMap);
 	}
