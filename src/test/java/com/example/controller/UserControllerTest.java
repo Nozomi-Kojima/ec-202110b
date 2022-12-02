@@ -3,6 +3,7 @@ package com.example.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.List;
@@ -26,9 +27,10 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.domain.User;
-
+import com.example.form.LoginForm;
 import com.example.util.CsvDataSetLoader;
 import com.example.util.SessionUtil;
+import com.example.util.SessionUtilShirai;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
@@ -190,12 +192,62 @@ class UserControllerTest {
 	    }
 	    @Test
 	    @DisplayName("ログイン(異常系)")
-	    void login() throws Exception {
+	    void login0() throws Exception {
 	        MockHttpSession userSession = SessionUtil.createUserIdAndUserSession();
 	        MvcResult mvcResult = mockMvc.perform(get("/user/login")
 	                        .session(userSession))
 	                .andExpect(view().name("/user/login"))
 	                .andReturn();
+	    }
+	    @Test
+	    @DisplayName("ログイン(異常系2)")
+	    @DatabaseSetup("/User/user_login")
+	    void login1() throws Exception {
+	    	MvcResult mvcResult = mockMvc.perform(post("/user/login")
+	    			.param("email", "test@test.co.jp")
+	    			.param("password", "moromoro"))
+	    			.andExpect(view().name("/user/login"))
+	    			.andReturn();
+	    }
+	    @Test
+	    @DatabaseSetup("/User/user_login")
+	    @DisplayName("ログインしてカートへ")
+	    void login2() throws Exception {
+	    	MockHttpSession cartSession = SessionUtilShirai.createCartSession();
+	    	MvcResult mvcResult = mockMvc.perform(post("/user/login")
+	    			.session(cartSession)
+	    			.param("email", "test@test.co.jp")
+	    			.param("password", "morimori"))
+	    			.andExpect(redirectedUrl("/cart/combineCart"))
+	    			.andReturn();
+	    	MockHttpSession mockSession = (MockHttpSession)mvcResult.getRequest().getSession(); 
+	    	List<User> userList = (List<User>)mockSession.getAttribute("user");
+	    	User user = userList.get(0);
+	    	assertEquals("テストユーザ", user.getName());
+	    }
+	    @Test
+	    @DatabaseSetup("/User/user_login")
+	    @DisplayName("ログインして注文履歴へ")
+	    void login3() throws Exception {
+	    	MockHttpSession cartSession = SessionUtilShirai.fromOrderHistoryLogin();
+	    	MvcResult mvcResult = mockMvc.perform(post("/user/login")
+	    			.session(cartSession)
+	    			.param("email", "test@test.co.jp")
+	    			.param("password", "morimori"))
+	    			.andExpect(view().name("forward:/orderHistory/"))
+	    			.andReturn();
+	    
+	    }
+	    @Test
+	    @DatabaseSetup("/User/user_login")
+	    @DisplayName("ログインして商品一覧へ")
+	    void login4() throws Exception {
+	    	MvcResult mvcResult = mockMvc.perform(post("/user/login")
+	    			.param("email", "test@test.co.jp")
+	    			.param("password", "morimori"))
+	    			.andExpect(redirectedUrl("/item"))
+	    			.andReturn();
+	    	
 	    }
 	   
 	
