@@ -64,10 +64,10 @@ public class SessionUtilShirai {
 		orderitem.setQuantity(1);
 		orderitem.setSize('M');
 		orderItemList.add(orderitem);
-//		List<User> userList = new ArrayList<>(List.of());
 		sessionMap.put("orderitemId", orderitem.getId());
 		sessionMap.put("orderItemList", orderItemList);
-//		sessionMap.put("userList", userList);
+//		List<User> userList = new ArrayList<>(List.of());
+//		sessionMap.put("user", userList);
 		return createMockHttpSession(sessionMap);
 	}
 	
@@ -100,6 +100,29 @@ public class SessionUtilShirai {
 		sessionMap.put("orderitemId", orderitem.getId());
 		sessionMap.put("user", userList);
 		sessionMap.put("orderItemList", orderItemList);
+		return createMockHttpSession(sessionMap);
+	}
+	
+	public static MockHttpSession fromOrderHistoryLogin() {
+		Map<String, Object> sessionMap = new LinkedHashMap<String, Object>();
+		List<OrderItem> orderItemList = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
+		List<OrderTopping> orderTopping = new ArrayList<>();
+
+			Item item = new Item(1, "とんこつラーメン", "創業当時から今に引き継ぐとんこつラーメンの本流であり、原点の味。18時間の調理と、丸1日の熟成を経て、とんこつの旨味を極限まで抽出した豊かで香り高いシルキーなスープに、博多らしい細麺がマッチします。", 700, 800, "1.jpg",false, null);
+		OrderItem orderitem = new OrderItem();
+//			orderitem.setId(2);
+			orderitem.setItem(item);
+			orderitem.setItemId(1);
+			orderitem.setOrderId(1);
+			orderitem.setOrderToppingList(orderTopping);
+			orderitem.setQuantity(1);
+			orderitem.setSize('M');
+			orderItemList.add(orderitem);
+		
+		sessionMap.put("orderitemId", orderitem.getId());
+//		sessionMap.put("orderItemList", orderItemList);
+		sessionMap.put("fromOrderHistory", "");
 		return createMockHttpSession(sessionMap);
 	}
 
