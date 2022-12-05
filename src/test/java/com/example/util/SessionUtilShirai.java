@@ -17,11 +17,11 @@ public class SessionUtilShirai {
 		List<User> userList = new ArrayList<>();
 		user.setId(1);
 		user.setName("テストユーザ");
-		user.setEmail("test@test.co.jp");
+		user.setEmail("ramen.test@gmail.com");
 		user.setPassword("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
-		user.setZipcode("111-1111");
+		user.setZipcode("1111111");
 		user.setAddress("テスト住所");
-		user.setTelephone("000-0000-0000");
+		user.setTelephone("テスト電話番号");
 		user.setPasswordConfirm("$2a$10$Utoo6nr3XIFEh4xOZ9Zr1.n/PtEYBb8HhlLDDklaJwsj.T3uux4kq");
 		userList.add(user);
 		sessionMap.put("userId", user.getId());
