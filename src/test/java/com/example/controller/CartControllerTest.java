@@ -2,8 +2,6 @@ package com.example.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -26,6 +24,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.example.domain.Item;
@@ -52,7 +52,6 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
  * Integer userId = (Integer)mockSession.getAttribute("userId");
  */
 
-@Transactional
 class CartControllerTest {
 	
 	@Autowired
@@ -111,16 +110,22 @@ class CartControllerTest {
 	}
 	@Test
 	@DisplayName("カート追加　ログイン")
+	@DatabaseSetup("/userInsertToCart2")
 	@ExpectedDatabase(value = "/userInsertToCart", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void insertToCart2() throws Exception{
 		MockHttpSession userSession = com.example.util.SessionUtilShirai.createUserIdAndUserSession();
+		MultiValueMap<String, String> orderToppingList = new LinkedMultiValueMap<String, String>();
+//		List<String> list = new ArrayList<>();
+//		list.add("1");
+//		orderToppingList.put("toppingId", list);
 		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
-				.session(userSession)
 				.param("itemId", "1").param("size","M").param("quantity", "1")
-				.param("orderToppingList", "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"))
+				.param("orderToppingList", "1")
+				.param("orderToppingList", "2")
+				.session(userSession))
 				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
 	}
-	
+
 	@Test
 	@DisplayName("カートから削除")
 	void deleteFromCart() throws Exception{
