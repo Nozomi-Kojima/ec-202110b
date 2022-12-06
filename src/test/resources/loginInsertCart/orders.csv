@@ -1,2 +1,2 @@
-user_id,status,total_price,order_date,destination_name,destination_email,destination_zipcode,destination_address,destination_tel,delivery_time,payment_method
-1,0,1540,2022-12-31,テストユーザ,test@test.co.jp,111-1111,テスト住所,000-0000-0000,2023-1-1 12:00:00,1
+id,user_id,status,total_price,order_date,destination_name,destination_email,destination_zipcode,destination_address,destination_tel,delivery_time,payment_method
+25,1,0,1540,2022-12-31,テストユーザ,test@test.co.jp,111-1111,テスト住所,000-0000-0000,2023-1-1 12:00:00,1

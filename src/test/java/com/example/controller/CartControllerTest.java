@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,6 +61,14 @@ class CartControllerTest {
 	
 	private MockMvc mockMvc;
 	
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+	}
+
+	@AfterAll
+	static void tearDownAfterClass() throws Exception {
+	}
+	
 	@BeforeEach
 	void setup() throws Exception {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
@@ -66,9 +76,9 @@ class CartControllerTest {
 	
 	@AfterEach
 	void tearDown(@Autowired javax.sql.DataSource datasource) throws Exception {
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
-		populator.execute(datasource);
+//			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//			populator.addScript(new ClassPathResource("/sql_shirai/auto_incriment.sql"));
+//			populator.execute(datasource);
 	}
 
 	@Test
@@ -109,12 +119,29 @@ class CartControllerTest {
 		assertEquals(1400, sum);
 	}
 	@Test
-	@DisplayName("カート追加　ログイン")
+	@DisplayName("カート追加　ログイン 注文履歴あり")
 	@DatabaseSetup("/userInsertToCart2")
 	@ExpectedDatabase(value = "/userInsertToCart", assertionMode = DatabaseAssertionMode.NON_STRICT)
 	void insertToCart2() throws Exception{
 		MockHttpSession userSession = com.example.util.SessionUtilShirai.createUserIdAndUserSession();
-		MultiValueMap<String, String> orderToppingList = new LinkedMultiValueMap<String, String>();
+//		MultiValueMap<String, String> orderToppingList = new LinkedMultiValueMap<String, String>();
+//		List<String> list = new ArrayList<>();
+//		list.add("1");
+//		orderToppingList.put("toppingId", list);
+		MvcResult mvcResult = mockMvc.perform(post("/cart/insert")
+				.param("itemId", "1").param("size","M").param("quantity", "1")
+				.param("orderToppingList", "1")
+				.param("orderToppingList", "2")
+				.session(userSession))
+				.andExpect(view().name("redirect:/cart/showCart")).andReturn();
+	}
+	@Test
+	@DisplayName("カート追加　ログイン 注文履歴なし")
+	@DatabaseSetup("/orderTable_reset")
+	@ExpectedDatabase(value = "/userInsertToCart2", assertionMode = DatabaseAssertionMode.NON_STRICT)
+	void insertToCart3() throws Exception{
+		MockHttpSession userSession = com.example.util.SessionUtilShirai.createUserIdAndUserSession();
+//		MultiValueMap<String, String> orderToppingList = new LinkedMultiValueMap<String, String>();
 //		List<String> list = new ArrayList<>();
 //		list.add("1");
 //		orderToppingList.put("toppingId", list);
@@ -175,7 +202,7 @@ class CartControllerTest {
 	}
 	@Test
 	@DisplayName("カートを見る　ログイン　カート追加なし")
-//	@DatabaseSetup("/popularSearch")
+	@DatabaseSetup("/orderTable_reset")
 	void showCart3() throws Exception{
 		MockHttpSession userSession = com.example.util.SessionUtilShirai.createUserIdAndUserSession();
 		MvcResult mvcResult = mockMvc.perform(post("/cart/showCart")

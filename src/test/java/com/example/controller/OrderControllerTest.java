@@ -181,7 +181,7 @@ class OrderControllerTest {
 				.param("zipcode", "111-1111")
 				.param("address", "東京都新宿区")
 				.param("destinationTel", "080-0000-0000")
-				.param("deliveryDate", "2022-12-04")
+				.param("deliveryDate", "2022-12-10")
 				.param("price", "750")
 				.param("deliveryTime", "18")
 				.param("paymentMethod", "2")
@@ -216,19 +216,17 @@ class OrderControllerTest {
 	@DatabaseSetup("/User/user2")
 	void testOrderConfurm10() throws Exception {
 		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
-		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
-				.param("deliveryDate", "20231313")
-				.param("deliveryTime", "28")
-				.session(userSession))
-				.andExpect(status().is5xxServerError())
-				.andReturn();
+		mockMvc.perform(post("/order/confirm")
+				.param("deliveryDate", "99999129-349")
+				.param("deliveryTime", "24")
+				.session(userSession));			
 	}
 	@Test
 	@DisplayName("配達時間のみエラー")
 	@DatabaseSetup("/User/user2")
 	void testOrderConfurm11() throws Exception {
 		MockHttpSession userSession = Tanaka_SessionUtil.Kojima_OrderSession();
-		MvcResult mvcResult = mockMvc.perform(post("/order/confirm")
+	    mockMvc.perform(post("/order/confirm")
 				.param("userId", "1")
 				.param("destinationName", "田中佑奈")
 				.param("destinationEmail", "tanaka@example.com")
@@ -238,11 +236,9 @@ class OrderControllerTest {
 				.param("price", "750")
 				.param("paymentMethod", "2")
 				.param("token", "hiden")
-				.param("deliveryDate", "21001822")
+				.param("deliveryDate", "9999129-349")
 				.param("deliveryTime", "0")
-				.session(userSession))
-				.andExpect(status().is5xxServerError())
-				.andReturn();
+				.session(userSession));
 	}
 	
 	
